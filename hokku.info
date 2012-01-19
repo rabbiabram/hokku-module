@@ -1,0 +1,7 @@
+name = hokku
+description = Validate hokku "add" form
+
+
+package = "Hokku Site"
+dependencies[] = views
+core = 6.x

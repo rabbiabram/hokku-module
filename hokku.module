@@ -1,0 +1,102 @@
+<?php
+//$Id$
+/**
+ * Implementation of hook_views_api().
+ */
+function hokku_views_api() {
+  return array(
+    'api' => '2',
+    'path' => drupal_get_path('module', 'foo'),
+    //'path' => drupal_get_path('module', 'foo') . '/includes',
+  );
+}
+
+/**
+ * Implementation of hook_node_info ()
+ * 
+ *
+function hokku_node_info () {
+	return array (
+					'hokku' => array (
+					  'name' => t ('hokku'), //Required
+					  'module' => 'hokku', //Required
+					  'description' => t ('A japonise hokku'),
+					  'has_title' => TRUE,
+					  'title_label' => t ('Title'),
+					  'has_body' => TRUE,
+					  'body_label' => t ('Body'),
+					  'min_word_count' => 2,
+					  'locked' => TRUE) 
+					  );	
+	}
+	*/
+/**
+ * Implementation of hook_perm ()
+ * 
+ * 
+ */
+function hokku_are_user_auth() {
+	global $user;
+	if ($user->uid == 0){
+		return true;
+		}
+		else{
+			return false;
+			}	
+	}
+function hokku_are_user_have_limit () {
+	global $user;
+	if (hokku_are_user_auth ()){
+		return false;
+		}
+		else {
+			$current_day = date ('d',time ());
+			db_query("DELETE FROM {hokku_limit_tokens} WHERE date < %d ", $current_day);
+			$result = db_query ("SELECT ip FROM {hokku_limit_tokens}");
+			$ip_arr = db_fetch_array ($result);
+			if (!$ip_arr) {
+				$ip_arr = array ();
+				}
+			if (in_array ($user->hostname,$ip_arr)){
+				return true;
+				}
+			}	
+	}
+
+
+function hokku_get_limit_token(){
+	global $user;
+	$timestamp = date ('d',time ());
+	$uip = $user->hostname;
+	db_query("INSERT INTO {hokku_limit_tokens} (ip,date) VALUES ('%s',%d)", $uip,$timestamp);
+	}	
+
+function hokku_after_build($form, &$form_state){
+	global $user;	
+	
+	
+	
+	}	
+
+function hokku_form_alter(&$form,&$form_state,$form_id){
+	global $user;
+	if ($form_id == 'hokku_node_form'){	
+		if (hokku_are_user_auth()){
+			if (hokku_are_user_have_limit()){
+				$form = array ();
+				$form['warning'] = array (
+				'#value' => t ('with your address @ip today has already been added citation'),
+				array ('@ip'=> $user->hostname),
+				'#weigth' => -6
+				);
+	
+			}
+		}	
+	}
+}	
+//function hokku_form_validate($form,&$form_state){
+//	if (valid_email_adress($mail) != true && trim ($mail) != "")
+
+
+//}
+
