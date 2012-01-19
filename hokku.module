@@ -1,7 +1,7 @@
 <?php
 //$Id$
 /**
- * Implementation of hook_views_api().
+ *   Implementation of hook_views_api().
  */
 function hokku_views_api() {
   return array(
