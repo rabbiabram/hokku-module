@@ -1,5 +1,5 @@
 name = hokku
-description = Validate  hokku "add" form
+description = Validate hokku "add" form
 
 
 package = "Hokku Site"

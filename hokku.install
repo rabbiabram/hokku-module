@@ -1,40 +1,39 @@
 <?php
 /**
-* Реализация hook_install().
+*Реализация hook_install().
 */
-function hokku_install() {
-	drupal_set_message(t('Begining installation of hokku module.'));
-	switch ($GLOBALS['db_name']) {
-		case 'mysql':
-		case 'mysqli':
-			db_query("CREATE TABLE hokku_limit_tokens (
-				tid int NOT NULL default 0,
-				ip varchar NOT NULL,
-				date int NOT NULL default 0,
-				PRIMARY KEY (tid)) /*140100 DEFAULT CHARACTER SET utf8 */;"
-				);
-			$success = TRUE;
-			break;
-		case 'pgsql':
-			db_query("CREATE TABLE hokku_limit_tokens (
-				tid int NOT NULL DEFAULT 0,
-				ip varchar NOT NULL,
-				date int NOT NULL DEFAULT 0,
-				PRIMARY KEY (tid));"
-				);
-			$success = TRUE;
-			break;
-		default:
-			drupal_set_message(t('Unsupported database.'));
-		}
-		if ($success){
-			drupal_set_message(t('The module installed tables successfully.'));
-			}
-		else {
-			drupal_set_message(t('The installation of the hokku module was unsuccessful.').'error');
-				
-			}	
-		}
+function hokku_schema() {
+	$schema['hokku_limit_tokens'] = array(
+				'description' => t('The access limit tokens for "add/node" action'),
+				'fields' => array(
+					'ip' =>array(
+						'description' => t('@ip adress of user'),
+						'type' => 'varchar',
+						'length' => 32,
+						'not null' => TRUE,
+					),
+					'date' => array(
+						'descriptiom' => t('Date indicating when the hokku was created.'),
+						'type' => 'int',
+						'not null' => TRUE,
+						'default' => 0,										
+					)
+				),
+				'primary key' => array(
+				'ip'
+				),
+	);
+	return $schema;	
+	}
+
+function hokku_install(){
+	drupal_install_schema('hokku_limit_tokens');
+	}
+	
+function hokku_uninstall(){
+	drupal_uninstall_schema('hokku_limit_tokens');
+	}	
+
 	
 	
 	

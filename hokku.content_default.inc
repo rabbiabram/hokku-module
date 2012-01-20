@@ -124,4 +124,3 @@ $content['extra']  = array (
   'menu' => '-2',
   'book' => '10',
 );
-//unstable
