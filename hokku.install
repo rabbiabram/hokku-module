@@ -21,7 +21,7 @@ function hokku_schema() {
 				),
 				'primary key' => array(
 				'ip'
-				)
+				),
 	);
 	return $schema;	
 	}
