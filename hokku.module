@@ -3,14 +3,14 @@
 /**
  * Implementation of hook_views_api().
  */
-function hokku_views_api() {
-  return array(
-    'api' => '2',
-    'path' => drupal_get_path('module', 'foo'),
-    //'path' => drupal_get_path('module', 'foo') . '/includes',
-  );
-}
-
+/** function hokku_views_api() {
+*  return array(
+*  'api' => '2',
+*   'path' => drupal_get_path('module', 'foo'),
+*   //'path' => drupal_get_path('module', 'foo') . '/includes',
+* );
+*}
+*/
 /**
  * Implementation of hook_node_info ()
  * 
@@ -31,10 +31,9 @@ function hokku_node_info () {
 	}
 	*/
 /**
- * Implementation of hook_perm ()
- * 
- * 
- */
+* ѕровер€ет, авторизован ли пользователь
+* по идее, работает именно так.
+*/
 function hokku_are_user_auth() {
 	global $user;
 	if ($user->uid == 0){
@@ -44,6 +43,12 @@ function hokku_are_user_auth() {
 			return false;
 			}	
 	}
+/**
+* ѕров€ре€т, есть ли на такой же ip как у пользовател€
+* данной сессии токен, подтверждающий что он уже добавл€л
+* хокку в течение дн€.
+*
+*/	
 function hokku_are_user_have_limit () {
 	global $user;
 	if (hokku_are_user_auth ()){
@@ -52,6 +57,7 @@ function hokku_are_user_have_limit () {
 		else {
 			$current_day = date ('d',time ());
 			db_query("DELETE FROM {hokku_limit_tokens} WHERE date < %d ", $current_day);
+			//ƒанный вопрос не выполн€етс€, посколько в базе нет записей.
 			$result = db_query ("SELECT ip FROM {hokku_limit_tokens}");
 			$ip_arr = db_fetch_array ($result);
 			if (!$ip_arr) {
@@ -62,14 +68,22 @@ function hokku_are_user_have_limit () {
 				}
 			}	
 	}
-
-
+/**
+* —оздает "токен" дл€ анонимных юзеров, добавивших хокку только что
+*
+*
+*/
 function hokku_get_limit_token(){
 	global $user;
 	$timestamp = date ('d',time ());
 	$uip = $user->hostname;
 	db_query("INSERT INTO {hokku_limit_tokens} (ip,date) VALUES ('%s',%d)", $uip,$timestamp);
-	}	
+	//Ётот тоже не выполн€етс€, что так же странно
+	}
+/** 
+* ≈сли верить найденным мануалам - запросы к базе тоже должны быть валидны.
+* ѕри их вызове не происходит ничего. —овсем.
+*/	
 
 function hokku_after_build($form, &$form_state){
 	global $user;	

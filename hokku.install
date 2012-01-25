@@ -21,10 +21,16 @@ function hokku_schema() {
 				),
 				'primary key' => array(
 				'ip'
-				),
+				)
 	);
 	return $schema;	
 	}
+/**
+* По какой-то причине, схема не добавляется в базу.
+* При этом, по идее hook_schema() описана валидно
+* Отсюда причины и не понятны.
+*
+*/
 
 function hokku_install(){
 	drupal_install_schema('hokku_limit_tokens');
